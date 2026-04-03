@@ -1,0 +1,22 @@
+title: Network Brute Force Attempt (Target User Focused)
+id: f58b1009-db97-4c07-96a1-a7eb294e5a95
+status: experimental
+description: Detects multiple failed logon attempts (Event ID 4625) targeting the same user over the network (Logon Type 3) within a short timeframe, indicating a potential brute force attack (e.g., via CrackMapExec).
+author: Emir Rasit Gokce
+date: 2026/04/03
+tags:
+    - attack.credential_access
+    - attack.t1110.001
+logsource:
+    product: windows
+    service: security
+detection:
+    selection:
+        EventID: 4625
+        LogonType: 3
+    condition: selection | count() by TargetUserName >= 5
+timeframe: 2m
+level: critical
+falsepositives:
+    - User forgetting their password and retrying multiple times (Verify LogonType is 3 and IP is external/suspicious).
+    - Misconfigured service accounts attempting to authenticate with old credentials.
