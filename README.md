@@ -70,3 +70,5 @@ After the SIEM engine was restored and the optimized rule was deployed, the brut
 * **Alert Fatigue** must be actively managed by escalating repetitive low-level logs into high-fidelity correlation alerts.
 
 * **System Stability** dictates visibility. A broken configuration file is just as dangerous as a sophisticated threat actor.
+
+### **Update:** A universal Sigma Rule (`brute_force_target_user.yml`) has been added to this repository for cross-SIEM compatibility (Splunk, QRadar, Sentinel).
