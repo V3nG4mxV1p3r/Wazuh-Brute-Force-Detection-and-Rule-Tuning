@@ -72,3 +72,68 @@ After the SIEM engine was restored and the optimized rule was deployed, the brut
 * **System Stability** dictates visibility. A broken configuration file is just as dangerous as a sophisticated threat actor.
 
 ### **Update:** A universal Sigma Rule (`brute_force_target_user.yml`) has been added to this repository for cross-SIEM compatibility (Splunk, QRadar, Sentinel).
+
+---
+
+# Wazuh SOC Lab Use Cases: Real-Time Threat Detection & Automated Response (SOAR)
+
+## 📖 Objective
+This repository is a comprehensive showcase of end-to-end Security Operations Center (SOC) simulations engineered within a localized, custom-built lab environment. The primary focus is to demonstrate practical expertise in bridging the gap between technical threat detection and corporate risk management.
+
+Key competencies demonstrated include:
+* **Detection Engineering** (Sysmon, Wazuh FIM)
+* **Rule Tuning & Correlation** (Custom XML, YAML/Sigma)
+* **Automated Incident Response** (SOAR/Active Response)
+* **Root Cause Analysis (RCA)** during implementation
+
+---
+
+## 🛠️ Environment Architecture
+* **SIEM:** Wazuh (Manager & Agent)
+* **Target:** Windows 10 (Endpoints)
+* **Logs:** Windows Security Events, Sysmon, File Integrity Monitoring (FIM)
+
+---
+
+## 🦠 Use Case 1: Real-Time Ransomware Mitigation (SOAR)
+
+### 🚨 Objective
+Detect a localized ransomware simulation and automatically execute a "Kill Switch" to terminate the malicious process before significant data encryption occurs.
+
+### 🔴 Phase 1: Attack Simulation (Red Team)
+A custom ransomware simulation (`Vengam Ransomware`) was executed. This PowerShell-based payload was obfuscated and hidden within a Batch (`.bat`) file to impersonate a legitimate "Emergency Payment Invoice".
+
+### 🔵 Phase 2: Detection Engineering (Blue Team)
+Wazuh's File Integrity Monitoring (FIM) was configured for real-time monitoring of sensitive directories (`C:\Users\Public\Financial_Statements`). A custom correlation rule (**Rule ID: 100013, Level 12**) was engineered to detect specific ransomware artifacts, such as malicious file extensions (`.vengam_locked`) and ransom notes.
+
+![rule_id100013](https://github.com/user-attachments/assets/c6bc7895-fb50-4de4-9e3d-51a81f6afb51)
+
+Crucially, the rule was set to **Real-Time** mode to ensure instant alerting, a fundamental component of effective ransomware defense.
+
+![realtime](https://github.com/user-attachments/assets/dac7d9cc-662b-4da6-b335-642078ed62e6)
+
+### 🛡️ Phase 3: Automated Response (SOAR / Active Response)
+To minimize the Mean Time to Remediate (MTTR), a custom **Active Response** command was configured. Upon firing Rule 100013, the Wazuh Manager immediately triggered a remote execution of `kill_ransomware.cmd` on the target Windows 10 asset, which forcibly terminated the malicious PowerShell process and dropped a defensive log.
+
+![kill_ransomware](https://github.com/user-attachments/assets/c938697a-3e95-48e1-badb-92df79d947ca)
+
+### 🏆 Results & RCA
+The operaton was a complete success. The ransomware was neutralized instantly. This was validated by the creation of the `SOC_DEFENSE_LOG.txt` file within the protected directory, which prevented further data encryption. During implementation, a silent failure was resolved by troubleshooting XML syntax errors (`rules_id` vs `rule_id`) and configuring correct file extensions in the Manager backend, highlighting advanced systems engineering and Root Cause Analysis (RCA) skills.
+
+![ransom_sonuc](https://github.com/user-attachments/assets/5e0265f0-c1e1-4694-ac2c-086ab5cdb725)
+
+---
+
+## 🛡️ Use Case 2: Enterprise Brute Force Detection (Previous Project)
+
+### 🚨 Objective
+Detect and correlate a targeted SMB brute force attack against a custom administrative user (`CEO_TEST`) across the network.
+
+### 🔴 Phase 1: Attack Simulation
+A network brute force attack was simulated using **CrackMapExec**, utilizing a custom wordlist to target the target user's SMB service.
+
+### 🔵 Phase 2: Correlation and Sigma Rule Tuning
+Wazuh's default low-level alerts were engineered into a **Level 12 Criticalcorrelation alert** using unique XML rule tuning (`<same_field>`). A duplicate Rule ID conflict was identified and resolved during this phase.
+
+Furthermore, a universal **Sigma (YAML)** rule was engineered to map this Use Case for cross-SIEM compatibility (Splunk, QRadar, Sentinel), demonstrating expertise in eviscerating alert fatigue and implementing enterprise-grade threat detection strategies.
+
